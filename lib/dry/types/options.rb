@@ -14,7 +14,17 @@ module Dry
       # @param [Hash] new_options
       # @return [Type]
       def with(new_options)
-        self.class.new(*@__args__, **options, meta: @meta, **new_options)
+        definition_constructor_options = {}
+
+        if @__args__.size > 1 && @__args__[1].is_a?(Hash)
+          definition_constructor_options = definition_constructor_options.merge!(@__args__[1])
+        end
+
+        definition_constructor_options.merge!(options)
+        definition_constructor_options.merge!({ meta: @meta })
+        definition_constructor_options.merge!(new_options)
+
+        self.class.new(@__args__[0], definition_constructor_options)
       end
 
       # @overload meta
